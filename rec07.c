@@ -1,3 +1,7 @@
+//Author: Bemnet Merkebu
+//CSCE-3600
+//Date: 3 April, 2023
+
 #include <stdio.h>
 #include <string.h>
 #include <pthread.h>
@@ -6,10 +10,12 @@
 
 char sentence[2000];
 int  ind = 0;
+//initialize mutex lock
+pthread_mutex_t printer_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 char convertUppercase(char lower)
 {
-	//Converts lowercase un uppercase
+	//Converts lowercase to uppercase
 	if ((lower > 96) && (lower < 123))
 	{
 		return (lower - 32);
@@ -29,6 +35,8 @@ void printChar()
 
 void *convertMessage(void *ptr)
 {
+	//lock the mutex lock
+	pthread_mutex_lock(&printer_mutex);
 	// Function that each threads initiates its execution
 	if (ind % 2)
 	{
@@ -36,6 +44,8 @@ void *convertMessage(void *ptr)
 	}
 	
 	printChar();
+	//unlock the mutex lock
+	pthread_mutex_unlock(&printer_mutex);
 
 	return 0;
 }
@@ -72,6 +82,8 @@ int main()
 	{
 		pthread_join(ts[i], NULL);
 	}
+	//destroy mutex lock
+	pthread_mutex_destroy(&printer_mutex);
 	
 	printf("\n");
 	
